@@ -1,62 +1,95 @@
-// const fs = require('fs');
-
-// const perintah = process.argv[2];
-// const nama = process.argv[3];
-// const nohp= process.argv[4];
-// const email  = process.argv[5];
-// const alamat = process.argv[6];
-
-// if(perintah === 'tambah'){
-//       const kontak = {nama, nohp, email, alamat};
-//       const file = fs.readFileSync('data/contacts.json', 'utf-8');
-//       const kontaks = JSON.parse(file);
-//       kontaks.push(kontak);
-//       fs.writeFileSync('data/contacts.json', JSON.stringify(kontaks, null, 2));
-//       console.log('Data berhasil ditambahkan');
-// }
-// else{
-//       console.log(`Perintah ${process.argv[2]} tidak ditemukan`);
-// }
-
-// const yargs = require('yargs');
-
-// yargs.command(
-//       'add',
-//       'Menambahkan Kontak Baru',
-//       () =>{},
-//       (argv) => {
-//             console.log(argv.nama);    
-//       }  
-// );
-
-// yargs.parse();
-
 const contacts = require('./contacts');
-
 const yargs = require('yargs');
 
 yargs.command({
-      command: 'add',
-      describe: 'Menambahkan Kontak Baru',
-      builder: {
-            nama: {
-                  describe: 'Nama Lengkap',
-                  demandOption: true,
-                  type: 'string'
-            },
-            email: {
-                  describe: 'Email',
-                  demandOption: false,
-                  type: 'string'
-            },
-            nohp: {
-                  describe: 'Nomor Handphone',
-                  demandOption: true,
-                  type: 'string'
-            },
-      },
-      handler(argv) {
-            contacts.simpanContact(argv.nama, argv.email, argv.nohp);
-      },
+    command: 'list',
+    describe: 'Menampilkan kontak',
+    handler() {
+        contacts.listContact();
+    },
 });
+
+yargs.command({
+    command: 'add',
+    describe: 'Menambahkan Kontak Baru',
+    builder: {
+        nama: {
+            describe: 'Nama Lengkap',
+            demandOption: true,
+            type: 'string',
+        },
+        email: {
+            describe: 'Email',
+            demandOption: false,
+            type: 'string',
+        },
+        nohp: {
+            describe: 'Nomor Handphone',
+            demandOption: true,
+            type: 'string',
+        },
+    },
+    handler(argv) {
+        contacts.simpanContact(argv.nama, argv.email, argv.nohp);
+    },
+});
+
+// Menampilkan detail kontak berdasarkan nama
+yargs.command({
+    command: 'detail',
+    describe: 'Menampilkan detail kontak berdasarkan nama',
+    builder: {
+        nama: {
+            describe: 'Nama Kontak',
+            demandOption: true,
+            type: 'string',
+        },
+    },
+    handler(argv) {
+        contacts.detailContact(argv.nama);
+    },
+});
+
+// Menghapus kontak berdasarkan nama
+yargs.command({
+    command: 'delete',
+    describe: 'Menghapus kontak berdasarkan nama',
+    builder: {
+        nama: {
+            describe: 'Nama Kontak',
+            demandOption: true,
+            type: 'string',
+        },
+    },
+    handler(argv) {
+        contacts.deleteContact(argv.nama);
+    },
+});
+
+// Mengedit kontak berdasarkan nama
+yargs.command({
+    command: 'edit',
+    describe: 'Mengedit kontak berdasarkan nama',
+    builder: {
+        nama: {
+            describe: 'Nama Kontak',
+            demandOption: true,
+            type: 'string',
+        },
+        email: {
+            describe: 'Email baru',
+            demandOption: false,
+            type: 'string',
+        },
+        nohp: {
+            describe: 'Nomor HP baru',
+            demandOption: false,
+            type: 'string',
+        },
+    },
+    handler(argv) {
+        contacts.editContact(argv.nama, argv.email, argv.nohp);
+    },
+}).demandCommand();
+
 yargs.parse();
